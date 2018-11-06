@@ -18,31 +18,20 @@ Services Provided
 What do you get if you point Sovereign at a server? All kinds of good stuff!
 
 -   [IMAP](https://en.wikipedia.org/wiki/Internet_Message_Access_Protocol) over SSL via [Dovecot](http://dovecot.org/), complete with full text search provided by [Solr](https://lucene.apache.org/solr/).
--   [POP3](https://en.wikipedia.org/wiki/Post_Office_Protocol) over SSL, also via Dovecot
 -   [SMTP](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol) over SSL via Postfix, including a nice set of [DNSBLs](https://en.wikipedia.org/wiki/DNSBL) to discard spam before it ever hits your filters.
 -   Virtual domains for your email, backed by [PostgreSQL](http://www.postgresql.org/).
 -   Spam fighting via [Rspamd](https://www.rspamd.com/).
 -   Mail server verification using [DKIM](http://www.dkim.org/) and [DMARC](http://www.dmarc.org/) so the Internet knows your mailserver is legit.
 -   Secure on-disk storage for email and more via [EncFS](http://www.arg0.net/encfs).
--   Webmail via [Roundcube](http://www.roundcube.net/).
 -   Mobile push notifications via [Z-Push](http://z-push.sourceforge.net/soswp/index.php?pages_id=1&t=home).
 -   Email client [automatic configuration](https://developer.mozilla.org/en-US/docs/Mozilla/Thunderbird/Autoconfiguration).
--   Jabber/[XMPP](http://xmpp.org/) instant messaging via [Prosody](http://prosody.im/).
--   An RSS Reader via [Selfoss](http://selfoss.aditu.de/).
 -   [CalDAV](https://en.wikipedia.org/wiki/CalDAV) and [CardDAV](https://en.wikipedia.org/wiki/CardDAV) to keep your calendars and contacts in sync, via [ownCloud](http://owncloud.org/).
 -   Your own private storage cloud via [ownCloud](http://owncloud.org/).
--   Your own VPN server via [OpenVPN](http://openvpn.net/index.php/open-source.html).
--   An IRC bouncer via [ZNC](http://wiki.znc.in/ZNC).
 -   [Monit](http://mmonit.com/monit/) to keep everything running smoothly (and alert you when it’s not).
 -   [collectd](http://collectd.org/) to collect system statistics.
--   Web hosting (ex: for your blog) via [Apache](https://www.apache.org/).
--   Firewall management via [Uncomplicated Firewall (ufw)](https://wiki.ubuntu.com/UncomplicatedFirewall).
 -   Intrusion prevention via [fail2ban](http://www.fail2ban.org/) and rootkit detection via [rkhunter](http://rkhunter.sourceforge.net).
 -   SSH configuration preventing root login and insecure password authentication
 -   [RFC6238](http://tools.ietf.org/html/rfc6238) two-factor authentication compatible with [Google Authenticator](http://en.wikipedia.org/wiki/Google_Authenticator) and various hardware tokens
--   Nightly backups to [Tarsnap](https://www.tarsnap.com/).
--   Git hosting via [cgit](http://git.zx2c4.com/cgit/about/) and [gitolite](https://github.com/sitaramc/gitolite).
--   Read-it-later via [Wallabag](https://www.wallabag.org/)
 -   A bunch of nice-to-have tools like [mosh](http://mosh.mit.edu) and [htop](http://htop.sourceforge.net) that make life with a server a little easier.
 
 Don’t want one or more of the above services? Comment out the relevant role in `site.yml`. Or get more granular and comment out the associated `include:` directive in one of the playbooks.
@@ -50,15 +39,13 @@ Don’t want one or more of the above services? Comment out the relevant role in
 Usage
 =====
 
-What You’ll Need
+What I use
 ----------------
 
-1.  A VPS (or bare-metal server if you wanna ball hard). My VPS is hosted at [Linode](http://www.linode.com/?r=45405878277aa04ee1f1d21394285da6b43f963b). You’ll probably want at least 512 MB of RAM between Apache, Solr, and PostgreSQL. Mine has 1024.
-2.  [64-bit Debian 8.3](http://www.debian.org/) or an equivalent Linux distribution. (You can use whatever distro you want, but deviating from Debian will require more tweaks to the playbooks. See Ansible’s different [packaging](http://docs.ansible.com/ansible/list_of_packaging_modules.html) modules.)
-3.  A [Tarsnap](http://www.tarsnap.com) account with some credit in it. You could comment this out if you want to use a different backup service. Consider paying your hosting provider for backups or using an additional backup service for redundancy.
+1. Digital Ocean droplet with firewall rules on the resource limiting access
+2.  [64-bit Debian 9.5](http://www.debian.org/) or an equivalent Linux distribution. (You can use whatever distro you want, but deviating from Debian will require more tweaks to the playbooks. See Ansible’s different [packaging](http://docs.ansible.com/ansible/list_of_packaging_modules.html) modules.)
 
 You do not need to acquire an SSL certificate.  The SSL certificates you need will be obtained from [Let's Encrypt](https://letsencrypt.org/) automatically when you deploy your server.
-
 
 Installation
 ------------
@@ -66,20 +53,6 @@ Installation
 ## On the remote server
 
 The following steps are done on the remote server by `ssh`ing into it and running these commands.
-
-### 1. Install required packages e.g `aptitude` is required on Debian
-
-    apt-get install sudo python
-
-### 2. Get a Tarsnap machine key
-
-If you haven’t already, [download and install Tarsnap](https://www.tarsnap.com/download.html), or use `brew install tarsnap` if you use [Homebrew](http://brew.sh).
-
-Create a new machine key for your server:
-
-    tarsnap-keygen --keyfile roles/tarsnap/files/decrypted_tarsnap.key --user me@example.com --machine example.com
-
-### 3. Prep the server
 
 For goodness sake, change the root password:
 
@@ -127,14 +100,9 @@ If you’ve just bought a new domain name, point it at [Linode’s DNS Manager](
 
 Create `A` or `CNAME` records which point to your server's IP address:
 
-* `example.com`
 * `mail.example.com`
-* `www.example.com` (for Web hosting)
 * `autoconfig.example.com` (for email client automatic configuration)
-* `read.example.com` (for Wallabag)
-* `news.example.com` (for Selfoss)
 * `cloud.example.com` (for ownCloud)
-* `git.example.com` (for cgit)
 
 ### 6. Run the Ansible Playbooks
 

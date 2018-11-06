@@ -24,8 +24,8 @@ SyslogFacility AUTH
 LogLevel INFO
 
 # Authentication:
-LoginGraceTime 120
-PermitRootLogin no
+LoginGraceTime 5
+PermitRootLogin yes
 StrictModes yes
 
 RSAAuthentication yes
@@ -46,7 +46,6 @@ ChallengeResponseAuthentication yes
 
 # Change to no to disable tunnelled clear text passwords
 PasswordAuthentication no
-
 
 X11Forwarding yes
 X11DisplayOffset 10
